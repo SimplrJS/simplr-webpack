@@ -1,45 +1,54 @@
 {
-  "name": "simplr-webpack",
-  "version": "0.1.0-alpha",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SimplrJS/simplr-webpack.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/SimplrJS/simplr-webpack/issues"
-  },
-  "homepage": "https://github.com/SimplrJS/simplr-webpack#readme",
-  "devDependencies": {
-    "simplr-tslint": "^1.0.0-alpha.13",
-    "tslint": "^5.10.0",
-    "tslint-language-service": "^0.9.9",
-    "typescript": "^2.9.2"
-  },
-  "dependencies": {
-    "@types/clean-webpack-plugin": "^0.1.2",
-    "@types/copy-webpack-plugin": "^4.4.1",
-    "@types/html-webpack-plugin": "^2.30.3",
-    "@types/html-webpack-template": "^6.0.3",
-    "@types/node": "^10.3.3",
-    "@types/webpack": "^4.4.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "clean-webpack-plugin": "^0.1.19",
-    "copy-webpack-plugin": "^4.5.1",
-    "fork-ts-checker-webpack-plugin": "^0.4.2",
-    "html-webpack-plugin": "^3.2.0",
-    "html-webpack-template": "^6.2.0",
-    "ts-loader": "^4.4.1",
-    "webpack": "^4.12.0",
-    "write-file-webpack-plugin": "^4.3.2"
-  }
+    "name": "simplr-webpack",
+    "version": "0.1.0-alpha",
+    "description": "Tailored webpack for SPA.",
+    "main": "./dist/index.js",
+    "scripts": {
+        "pretest": "tsc -p . --noEmit",
+        "test": "tslint --project . --config ./tslint.json && echo Successfully passed tslint test.",
+        "build": "tsc -p .",
+        "watch": "tsc -p . -w"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SimplrJS/simplr-webpack.git"
+    },
+    "keywords": [],
+    "author": "SimplrJS <simplr@quatrodev.com> (https://github.com/simplrjs)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/SimplrJS/simplr-webpack/issues"
+    },
+    "homepage": "https://github.com/SimplrJS/simplr-webpack#readme",
+    "files": [
+        "dist",
+        "**/*.md",
+        "@types",
+        "!/examples"
+    ],
+    "devDependencies": {
+        "simplr-tslint": "^1.0.0-alpha.13",
+        "tslint": "^5.10.0",
+        "tslint-language-service": "^0.9.9",
+        "typescript": "^2.9.2"
+    },
+    "dependencies": {
+        "@types/clean-webpack-plugin": "^0.1.2",
+        "@types/copy-webpack-plugin": "^4.4.1",
+        "@types/html-webpack-plugin": "^2.30.3",
+        "@types/html-webpack-template": "^6.0.3",
+        "@types/node": "^10.3.3",
+        "@types/webpack": "^4.4.0",
+        "babel-core": "^6.26.3",
+        "babel-loader": "^7.1.4",
+        "babel-plugin-syntax-dynamic-import": "^6.18.0",
+        "clean-webpack-plugin": "^0.1.19",
+        "copy-webpack-plugin": "^4.5.1",
+        "fork-ts-checker-webpack-plugin": "^0.4.2",
+        "html-webpack-plugin": "^3.2.0",
+        "html-webpack-template": "^6.2.0",
+        "ts-loader": "^4.4.1",
+        "webpack": "^4.12.0",
+        "write-file-webpack-plugin": "^4.3.2"
+    }
 }
