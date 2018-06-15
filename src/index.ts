@@ -1,1 +1,2 @@
-console.info("Hello world");
+export * from "./contracts";
+export * from "./webpack-config";
