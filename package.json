@@ -1,0 +1,29 @@
+{
+  "name": "simplr-webpack",
+  "version": "0.1.0-alpha",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimplrJS/simplr-webpack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SimplrJS/simplr-webpack/issues"
+  },
+  "homepage": "https://github.com/SimplrJS/simplr-webpack#readme",
+  "devDependencies": {
+    "simplr-tslint": "^1.0.0-alpha.13",
+    "tslint": "^5.10.0",
+    "tslint-language-service": "^0.9.9",
+    "typescript": "^2.9.2"
+  },
+  "dependencies": {
+    "@types/node": "^10.3.3"
+  }
+}
