@@ -3,6 +3,7 @@
     "version": "0.1.0-alpha",
     "description": "Tailored webpack for SPA.",
     "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "scripts": {
         "pretest": "tsc -p . --noEmit",
         "test": "tslint --project . --config ./tslint.json && echo Successfully passed tslint test.",
