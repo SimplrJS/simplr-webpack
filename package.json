@@ -2,6 +2,9 @@
     "name": "@simplrjs/webpack",
     "version": "0.1.0-alpha",
     "description": "Tailored webpack for SPA.",
+    "publishConfig": {
+        "access": "public"
+    },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
