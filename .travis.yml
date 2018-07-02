@@ -10,7 +10,7 @@ branches:
 node_js:
 - "node"
 script:
-- npm run test-ci
+- npm test
 deploy:
   provider: npm
   email: $SIMPLR_NPM_EMAIL
