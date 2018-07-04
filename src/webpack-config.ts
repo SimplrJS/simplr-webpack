@@ -13,6 +13,7 @@ import { SimplrWebpackOptions } from "./contracts";
 export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
     const options: Required<SimplrWebpackOptions> = {
         ...opts,
+        htmlOptions: opts.htmlOptions || ({} as Options),
         devServerPort: opts.devServerPort || 3000,
         entryFile: opts.entryFile || "./src/index.ts",
         outputDirectory: opts.outputDirectory || "./wwwroot",
@@ -30,8 +31,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             path: fullOutputDirectoryLocation
         },
         resolve: {
-            // Add `.ts` and `.tsx` as a resolvable extension.
-            extensions: [".ts", ".tsx", ".js", ".json"]
+            extensions: [".ts", ".tsx", ".js", ".json", ".scss"]
         },
         module: {
             rules: [
@@ -55,6 +55,19 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                             }
                         }
                     ]
+                },
+                {
+                    test: /\.scss$/,
+                    use: [
+                        // Creates style nodes from JS strings.
+                        "style-loader",
+                        // // Translates CSS into CommonJS.
+                        // "css-loader",
+                        // Autoprefixer
+                        "postcss-loader",
+                        // Compiles Sass to CSS.
+                        "sass-loader"
+                    ]
                 }
             ]
         },
@@ -68,7 +81,6 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                           inject: false,
                           template: HtmlWebpackTemplate,
                           appMountIds: ["root"],
-
                           links: [
                               // {
                               //     rel: "stylesheet",
@@ -82,7 +94,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                                   name: "viewport",
                                   content: "width=device-width, initial-scale=1"
                               }
-                          ]
+                          ],
+                          ...options.htmlOptions
                       } as Options)
                   ]),
             new ForkTsCheckerWebpackPlugin({
