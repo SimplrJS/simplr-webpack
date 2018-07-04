@@ -16,7 +16,9 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         devServerPort: opts.devServerPort || 3000,
         entryFile: opts.entryFile || "./src/index.ts",
         outputDirectory: opts.outputDirectory || "./wwwroot",
-        staticContentDirectory: opts.outputDirectory || "./src/static"
+        staticContentDirectory: opts.outputDirectory || "./src/static",
+        emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
+        target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
 
@@ -59,26 +61,30 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         plugins: [
             new CleanWebpackPlugin([fullOutputDirectoryLocation]),
             new WriteFilePlugin(),
-            new HtmlWebpackPlugin({
-                inject: false,
-                template: HtmlWebpackTemplate,
-                appMountIds: ["root"],
+            ...(!opts.emitHtml
+                ? []
+                : [
+                      new HtmlWebpackPlugin({
+                          inject: false,
+                          template: HtmlWebpackTemplate,
+                          appMountIds: ["root"],
 
-                links: [
-                    // {
-                    //     rel: "stylesheet",
-                    //     href: "https://use.fontawesome.com/releases/v5.0.10/css/all.css",
-                    //     integrity: "sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg",
-                    //     crossorigin: "anonymous"
-                    // }
-                ],
-                meta: [
-                    {
-                        name: "viewport",
-                        content: "width=device-width, initial-scale=1"
-                    }
-                ]
-            } as Options),
+                          links: [
+                              // {
+                              //     rel: "stylesheet",
+                              //     href: "https://use.fontawesome.com/releases/v5.0.10/css/all.css",
+                              //     integrity: "sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg",
+                              //     crossorigin: "anonymous"
+                              // }
+                          ],
+                          meta: [
+                              {
+                                  name: "viewport",
+                                  content: "width=device-width, initial-scale=1"
+                              }
+                          ]
+                      } as Options)
+                  ]),
             new ForkTsCheckerWebpackPlugin({
                 checkSyntacticErrors: true,
                 tslint: true
@@ -96,19 +102,25 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         },
         // addition - add source-map support
         devtool: "inline-source-map",
-        devServer: {
-            contentBase: fullOutputDirectoryLocation,
-            compress: true,
-            host: "0.0.0.0",
-            quiet: false,
-            port: options.devServerPort
-        },
-        target: "web",
+        devServer:
+            opts.target === "node"
+                ? {}
+                : {
+                      contentBase: fullOutputDirectoryLocation,
+                      compress: true,
+                      host: "0.0.0.0",
+                      quiet: false,
+                      port: options.devServerPort
+                  },
+        target: opts.target,
         mode: "development",
-        node: {
-            fs: "empty",
-            net: "empty",
-            tls: "empty"
-        }
+        node:
+            opts.target === "node"
+                ? {}
+                : {
+                      fs: "empty",
+                      net: "empty",
+                      tls: "empty"
+                  }
     };
 }
