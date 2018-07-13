@@ -11,7 +11,7 @@
         "strict": true,
         "moduleResolution": "node",
         "forceConsistentCasingInFileNames": true,
-        "lib": ["es6", "es2017.object"],
+        "lib": ["es6", "es2017.object", "dom"],
         "types": ["node"],
         "typeRoots": ["./node_modules/@types"],
         "plugins": [
