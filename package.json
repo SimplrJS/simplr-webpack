@@ -1,6 +1,6 @@
 {
     "name": "@simplrjs/webpack",
-    "version": "0.1.0-alpha.7",
+    "version": "0.1.0-alpha.8",
     "description": "Tailored webpack for SPA.",
     "publishConfig": {
         "access": "public"
@@ -33,7 +33,8 @@
     "devDependencies": {
         "tslint": "^5.10.0",
         "tslint-language-service": "^0.9.9",
-        "typescript": "^2.9.2"
+        "typescript": "^2.9.2",
+        "simplr-tslint": "^1.0.0-alpha.14"
     },
     "peerDependencies": {
         "webpack": "^4.12.0",
@@ -42,7 +43,6 @@
         "typescript": "^2.9.2"
     },
     "dependencies": {
-        "simplr-tslint": "^1.0.0-alpha.14",
         "@types/clean-webpack-plugin": "^0.1.2",
         "@types/copy-webpack-plugin": "^4.4.1",
         "@types/fs-extra": "^5.0.4",
