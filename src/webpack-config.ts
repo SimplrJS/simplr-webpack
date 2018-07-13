@@ -36,7 +36,12 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
-    postCssConfig(options.projectDirectory);
+
+    try {
+        postCssConfig(options.projectDirectory);
+    } catch (error) {
+        console.error("Failed while initiating `postcsss.config.js`.", error);
+    }
 
     return {
         entry: options.entryFile,
