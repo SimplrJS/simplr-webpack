@@ -13,13 +13,25 @@ import { SimplrWebpackOptions } from "./contracts";
 
 const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
 const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", POSTCSS_CONFIG_NAME);
+const TSLINT_CONFIG_NAME: string = "tslint.json";
+const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TSLINT_CONFIG_NAME);
 
-function postCssConfig(projectDirectory: string): void {
+function checkCostCssConfig(projectDirectory: string): void {
     const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
 
     if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "postcss.config.js" not found at ${configLocation}. Creating...`);
+        console.info(`File "${POSTCSS_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
         fs.copySync(DEFAULT_POSTCSS_CONFIG_LOCATION, configLocation);
+        console.info("Created.");
+    }
+}
+
+function checkTslintConfig(projectDirectory: string): void {
+    const configLocation = path.resolve(projectDirectory, TSLINT_CONFIG_NAME);
+
+    if (!fs.pathExistsSync(configLocation)) {
+        console.info(`File "${TSLINT_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
+        fs.copySync(DEFAULT_TSLINT_CONFIG_LOCATION, configLocation);
         console.info("Created.");
     }
 }
@@ -38,9 +50,15 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
 
     try {
-        postCssConfig(options.projectDirectory);
+        checkCostCssConfig(options.projectDirectory);
     } catch (error) {
-        console.error("Failed while initiating `postcsss.config.js`.", error);
+        console.error(`Failed while initiating "${POSTCSS_CONFIG_NAME}".`, error);
+    }
+
+    try {
+        checkTslintConfig(options.projectDirectory);
+    } catch (error) {
+        console.error(`Failed while initiating "${TSLINT_CONFIG_NAME}".`, error);
     }
 
     return {
