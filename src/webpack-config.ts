@@ -7,8 +7,22 @@ import * as HtmlWebpackTemplate from "html-webpack-template";
 import { Options } from "html-webpack-template";
 import * as ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import * as CopyWebpackPlugin from "copy-webpack-plugin";
+import * as fs from "fs-extra";
 
 import { SimplrWebpackOptions } from "./contracts";
+
+const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
+const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", POSTCSS_CONFIG_NAME);
+
+function postCssConfig(projectDirectory: string): void {
+    const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
+
+    if (!fs.pathExistsSync(configLocation)) {
+        console.info(`File "postcss.config.js" not found at ${configLocation}. Creating...`);
+        fs.copySync(DEFAULT_POSTCSS_CONFIG_LOCATION, configLocation);
+        console.info("Created.");
+    }
+}
 
 export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
     const options: Required<SimplrWebpackOptions> = {
@@ -22,6 +36,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
+    postCssConfig(options.projectDirectory);
 
     return {
         entry: options.entryFile,
