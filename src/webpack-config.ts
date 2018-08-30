@@ -43,7 +43,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         devServerPort: opts.devServerPort || 3000,
         entryFile: opts.entryFile || "./src/index.ts",
         outputDirectory: opts.outputDirectory || "./wwwroot",
-        staticContentDirectory: opts.outputDirectory || "./src/static",
+        staticContentDirectory: opts.staticContentDirectory || "./src/static",
+        staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
         emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
         target: opts.target || "web"
     };
@@ -142,7 +143,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             }),
             new CopyWebpackPlugin([
                 {
-                    from: options.staticContentDirectory
+                    from: options.staticContentDirectory,
+                    to: options.staticContentDirectoryOutput
                 }
             ])
         ],

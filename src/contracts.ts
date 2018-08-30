@@ -1,5 +1,16 @@
 import { Options } from "html-webpack-template";
 
+// prettier-ignore
+export type SimplrWebpackTarget =
+    | "web"
+    | "node"
+    | "electron-renderer";
+// | "webworker"
+// | "async-node"
+// | "node-webkit"
+// | "atom"
+// | "electron-main";
+
 export interface SimplrWebpackOptions {
     devServerPort?: number;
     emitHtml?: boolean;
@@ -8,5 +19,10 @@ export interface SimplrWebpackOptions {
     entryFile?: string;
     outputDirectory?: string;
     staticContentDirectory?: string;
-    target?: "web" | "node";
+    /**
+     * Full path is: {outputDirectory} + {staticContentDirectoryOutput}
+     * Example: `./dist` + `./static` = `./dist/static`
+     */
+    staticContentDirectoryOutput?: string;
+    target?: SimplrWebpackTarget;
 }
