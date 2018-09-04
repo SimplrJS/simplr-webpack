@@ -6,48 +6,11 @@ import * as CleanWebpackPlugin from "clean-webpack-plugin";
 import * as HtmlWebpackTemplate from "html-webpack-template";
 import { Options } from "html-webpack-template";
 import * as ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
-import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin/lib";
 import * as CopyWebpackPlugin from "copy-webpack-plugin";
-import * as fs from "fs-extra";
 
 import { SimplrWebpackOptions } from "./contracts";
-
-const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
-const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", POSTCSS_CONFIG_NAME);
-const TSLINT_CONFIG_NAME: string = "tslint.json";
-const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TSLINT_CONFIG_NAME);
-const TS_CONFIG_NAME: string = "tsconfig.json";
-const DEFAULT_TS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TS_CONFIG_NAME);
-
-function checkCostCssConfig(projectDirectory: string): void {
-    const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
-
-    if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "${POSTCSS_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
-        fs.copySync(DEFAULT_POSTCSS_CONFIG_LOCATION, configLocation);
-        console.info("Created.");
-    }
-}
-
-function checkTslintConfig(projectDirectory: string): void {
-    const configLocation = path.resolve(projectDirectory, TSLINT_CONFIG_NAME);
-
-    if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "${TSLINT_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
-        fs.copySync(DEFAULT_TSLINT_CONFIG_LOCATION, configLocation);
-        console.info("Created.");
-    }
-}
-
-function checkTsConfig(projectDirectory: string): void {
-    const configLocation = path.resolve(projectDirectory, TS_CONFIG_NAME);
-
-    if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "${TS_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
-        fs.copySync(DEFAULT_TS_CONFIG_LOCATION, configLocation);
-        console.info("Created.");
-    }
-}
+import { Helpers } from "./helpers";
 
 export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
     const options: Required<SimplrWebpackOptions> = {
@@ -63,24 +26,24 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
-    const fullTsconfigLocation = path.resolve(options.projectDirectory, TS_CONFIG_NAME);
+    const fullTsconfigLocation = path.resolve(options.projectDirectory, Helpers.TS_CONFIG_NAME);
 
     try {
-        checkCostCssConfig(options.projectDirectory);
+        Helpers.checkCostCssConfig(options.projectDirectory);
     } catch (error) {
-        console.error(`Failed while initiating "${POSTCSS_CONFIG_NAME}".`, error);
+        console.error(`Failed while initiating "${Helpers.POSTCSS_CONFIG_NAME}".`, error);
     }
 
     try {
-        checkTsConfig(options.projectDirectory);
+        Helpers.checkTsConfig(options.projectDirectory);
     } catch (error) {
-        console.error(`Failed while initiating "${TS_CONFIG_NAME}".`, error);
+        console.error(`Failed while initiating "${Helpers.TS_CONFIG_NAME}".`, error);
     }
 
     try {
-        checkTslintConfig(options.projectDirectory);
+        Helpers.checkTslintConfig(options.projectDirectory);
     } catch (error) {
-        console.error(`Failed while initiating "${TSLINT_CONFIG_NAME}".`, error);
+        console.error(`Failed while initiating "${Helpers.TSLINT_CONFIG_NAME}".`, error);
     }
 
     return {
