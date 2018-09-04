@@ -29,7 +29,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
     const fullTsconfigLocation = path.resolve(options.projectDirectory, Helpers.TS_CONFIG_NAME);
 
     try {
-        Helpers.checkCostCssConfig(options.projectDirectory);
+        Helpers.checkPostCssConfig(options.projectDirectory);
     } catch (error) {
         console.error(`Failed while initiating "${Helpers.POSTCSS_CONFIG_NAME}".`, error);
     }

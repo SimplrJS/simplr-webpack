@@ -9,7 +9,7 @@ export namespace Helpers {
     export const TS_CONFIG_NAME: string = "tsconfig.json";
     export const DEFAULT_TS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TS_CONFIG_NAME);
 
-    export function checkCostCssConfig(projectDirectory: string): void {
+    export function checkPostCssConfig(projectDirectory: string): void {
         const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
 
         if (!fs.pathExistsSync(configLocation)) {
