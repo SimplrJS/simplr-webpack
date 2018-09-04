@@ -91,7 +91,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             publicPath: "/"
         },
         resolve: {
-            extensions: [".ts", ".tsx", ".js", ".json", ".scss"],
+            extensions: [".ts", ".tsx", ".js", ".json", ".scss", ".css"],
             plugins: [
                 new TsconfigPathsPlugin({
                     configFile: fullTsconfigLocation
@@ -133,6 +133,14 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                         // Compiles Sass to CSS.
                         "sass-loader"
                     ]
+                },
+                {
+                    test: /\.css$/,
+                    use: ["style-loader", "css-loader"]
+                },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/,
+                    loader: "file-loader"
                 }
             ]
         },
