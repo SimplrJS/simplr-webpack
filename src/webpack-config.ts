@@ -6,6 +6,7 @@ import * as CleanWebpackPlugin from "clean-webpack-plugin";
 import * as HtmlWebpackTemplate from "html-webpack-template";
 import { Options } from "html-webpack-template";
 import * as ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 import * as CopyWebpackPlugin from "copy-webpack-plugin";
 import * as fs from "fs-extra";
 
@@ -15,6 +16,8 @@ const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
 const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", POSTCSS_CONFIG_NAME);
 const TSLINT_CONFIG_NAME: string = "tslint.json";
 const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TSLINT_CONFIG_NAME);
+const TSCONFIG_NAME: string = "tsconfig.json";
+const DEFAULT_TSCONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TSCONFIG_NAME);
 
 function checkCostCssConfig(projectDirectory: string): void {
     const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
@@ -36,6 +39,16 @@ function checkTslintConfig(projectDirectory: string): void {
     }
 }
 
+function checkTsConfig(projectDirectory: string): void {
+    const configLocation = path.resolve(projectDirectory, TSCONFIG_NAME);
+
+    if (!fs.pathExistsSync(configLocation)) {
+        console.info(`File "${TSCONFIG_NAME}" not found at ${configLocation}. Creating...`);
+        fs.copySync(DEFAULT_TSCONFIG_LOCATION, configLocation);
+        console.info("Created.");
+    }
+}
+
 export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
     const options: Required<SimplrWebpackOptions> = {
         ...opts,
@@ -49,11 +62,18 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
+    const fullTsconfigLocation = path.resolve(options.projectDirectory, TSCONFIG_NAME);
 
     try {
         checkCostCssConfig(options.projectDirectory);
     } catch (error) {
         console.error(`Failed while initiating "${POSTCSS_CONFIG_NAME}".`, error);
+    }
+
+    try {
+        checkTsConfig(options.projectDirectory);
+    } catch (error) {
+        console.error(`Failed while initiating "${TSCONFIG_NAME}".`, error);
     }
 
     try {
@@ -71,7 +91,12 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             publicPath: "/"
         },
         resolve: {
-            extensions: [".ts", ".tsx", ".js", ".json", ".scss"]
+            extensions: [".ts", ".tsx", ".js", ".json", ".scss"],
+            plugins: [
+                new TsconfigPathsPlugin({
+                    configFile: fullTsconfigLocation
+                })
+            ]
         },
         module: {
             rules: [
