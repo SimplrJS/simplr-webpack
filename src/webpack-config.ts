@@ -67,7 +67,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         output: {
             filename: "[name].bundle.js",
             chunkFilename: "[name].bundle.js",
-            path: fullOutputDirectoryLocation
+            path: fullOutputDirectoryLocation,
+            publicPath: "/"
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json", ".scss"]
@@ -163,7 +164,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                       compress: true,
                       host: "0.0.0.0",
                       quiet: false,
-                      port: options.devServerPort
+                      port: options.devServerPort,
+                      historyApiFallback: true
                   },
         target: opts.target,
         mode: "development",
