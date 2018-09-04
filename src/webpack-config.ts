@@ -58,6 +58,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         outputDirectory: opts.outputDirectory || "./wwwroot",
         staticContentDirectory: opts.staticContentDirectory || "./src/static",
         staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
+        fontsDirectoryOutput: opts.fontsDirectoryOutput || "./fonts",
         emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
         target: opts.target || "web"
     };
@@ -140,12 +141,15 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/,
+                    options: {
+                        name: `./${options.fontsDirectoryOutput}/[name].[ext]`
+                    },
                     loader: "file-loader"
                 }
             ]
         },
         plugins: [
-            new CleanWebpackPlugin([fullOutputDirectoryLocation]),
+            new CleanWebpackPlugin([fullOutputDirectoryLocation], { root: options.projectDirectory }),
             new WriteFilePlugin(),
             ...(!opts.emitHtml
                 ? []
