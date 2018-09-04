@@ -24,5 +24,10 @@ export interface SimplrWebpackOptions {
      * Example: `./dist` + `./static` = `./dist/static`
      */
     staticContentDirectoryOutput?: string;
+    /**
+     * Full path is: {outputDirectory} + {fontsDirectoryOutput}
+     * Example: `./dist` + `./fonts` = `./dist/fonts`
+     */
+    fontsDirectoryOutput?: string;
     target?: SimplrWebpackTarget;
 }

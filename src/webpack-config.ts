@@ -6,35 +6,11 @@ import * as CleanWebpackPlugin from "clean-webpack-plugin";
 import * as HtmlWebpackTemplate from "html-webpack-template";
 import { Options } from "html-webpack-template";
 import * as ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin/lib";
 import * as CopyWebpackPlugin from "copy-webpack-plugin";
-import * as fs from "fs-extra";
 
 import { SimplrWebpackOptions } from "./contracts";
-
-const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
-const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", POSTCSS_CONFIG_NAME);
-const TSLINT_CONFIG_NAME: string = "tslint.json";
-const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, "../assets", TSLINT_CONFIG_NAME);
-
-function checkCostCssConfig(projectDirectory: string): void {
-    const configLocation = path.resolve(projectDirectory, POSTCSS_CONFIG_NAME);
-
-    if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "${POSTCSS_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
-        fs.copySync(DEFAULT_POSTCSS_CONFIG_LOCATION, configLocation);
-        console.info("Created.");
-    }
-}
-
-function checkTslintConfig(projectDirectory: string): void {
-    const configLocation = path.resolve(projectDirectory, TSLINT_CONFIG_NAME);
-
-    if (!fs.pathExistsSync(configLocation)) {
-        console.info(`File "${TSLINT_CONFIG_NAME}" not found at ${configLocation}. Creating...`);
-        fs.copySync(DEFAULT_TSLINT_CONFIG_LOCATION, configLocation);
-        console.info("Created.");
-    }
-}
+import { Helpers } from "./helpers";
 
 export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
     const options: Required<SimplrWebpackOptions> = {
@@ -45,21 +21,29 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         outputDirectory: opts.outputDirectory || "./wwwroot",
         staticContentDirectory: opts.staticContentDirectory || "./src/static",
         staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
+        fontsDirectoryOutput: opts.fontsDirectoryOutput || "./fonts",
         emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
         target: opts.target || "web"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
+    const fullTsconfigLocation = path.resolve(options.projectDirectory, Helpers.TS_CONFIG_NAME);
 
     try {
-        checkCostCssConfig(options.projectDirectory);
+        Helpers.checkPostCssConfig(options.projectDirectory);
     } catch (error) {
-        console.error(`Failed while initiating "${POSTCSS_CONFIG_NAME}".`, error);
+        console.error(`Failed while initiating "${Helpers.POSTCSS_CONFIG_NAME}".`, error);
     }
 
     try {
-        checkTslintConfig(options.projectDirectory);
+        Helpers.checkTsConfig(options.projectDirectory);
     } catch (error) {
-        console.error(`Failed while initiating "${TSLINT_CONFIG_NAME}".`, error);
+        console.error(`Failed while initiating "${Helpers.TS_CONFIG_NAME}".`, error);
+    }
+
+    try {
+        Helpers.checkTslintConfig(options.projectDirectory);
+    } catch (error) {
+        console.error(`Failed while initiating "${Helpers.TSLINT_CONFIG_NAME}".`, error);
     }
 
     return {
@@ -67,10 +51,16 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         output: {
             filename: "[name].bundle.js",
             chunkFilename: "[name].bundle.js",
-            path: fullOutputDirectoryLocation
+            path: fullOutputDirectoryLocation,
+            publicPath: "/"
         },
         resolve: {
-            extensions: [".ts", ".tsx", ".js", ".json", ".scss"]
+            extensions: [".ts", ".tsx", ".js", ".json", ".scss", ".css"],
+            plugins: [
+                new TsconfigPathsPlugin({
+                    configFile: fullTsconfigLocation
+                })
+            ]
         },
         module: {
             rules: [
@@ -107,11 +97,22 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                         // Compiles Sass to CSS.
                         "sass-loader"
                     ]
+                },
+                {
+                    test: /\.css$/,
+                    use: ["style-loader", "css-loader"]
+                },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/,
+                    options: {
+                        name: `./${options.fontsDirectoryOutput}/[name].[ext]`
+                    },
+                    loader: "file-loader"
                 }
             ]
         },
         plugins: [
-            new CleanWebpackPlugin([fullOutputDirectoryLocation]),
+            new CleanWebpackPlugin([fullOutputDirectoryLocation], { root: options.projectDirectory }),
             new WriteFilePlugin(),
             ...(!opts.emitHtml
                 ? []
@@ -119,15 +120,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                       new HtmlWebpackPlugin({
                           inject: false,
                           template: HtmlWebpackTemplate,
+                          baseHref: "/",
                           appMountIds: ["root"],
-                          links: [
-                              // {
-                              //     rel: "stylesheet",
-                              //     href: "https://use.fontawesome.com/releases/v5.0.10/css/all.css",
-                              //     integrity: "sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg",
-                              //     crossorigin: "anonymous"
-                              // }
-                          ],
                           meta: [
                               {
                                   name: "viewport",
@@ -163,7 +157,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                       compress: true,
                       host: "0.0.0.0",
                       quiet: false,
-                      port: options.devServerPort
+                      port: options.devServerPort,
+                      historyApiFallback: true
                   },
         target: opts.target,
         mode: "development",
