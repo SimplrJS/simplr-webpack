@@ -23,7 +23,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
         fontsDirectoryOutput: opts.fontsDirectoryOutput || "./fonts",
         emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
-        target: opts.target || "web"
+        target: opts.target || "web",
+        publicPath: opts.publicPath || "/"
     };
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
     const fullTsconfigLocation = path.resolve(options.projectDirectory, Helpers.TS_CONFIG_NAME);
@@ -52,7 +53,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             filename: "[name].bundle.js",
             chunkFilename: "[name].bundle.js",
             path: fullOutputDirectoryLocation,
-            publicPath: "/"
+            publicPath: opts.publicPath
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json", ".scss", ".css"],
@@ -105,7 +106,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/,
                     options: {
-                        name: `./${options.fontsDirectoryOutput}/[name].[ext]`
+                        name: `./${options.fontsDirectoryOutput}/[name].[ext]`,
+                        publicPath: opts.publicPath
                     },
                     loader: "file-loader"
                 }

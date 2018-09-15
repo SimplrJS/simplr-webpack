@@ -29,5 +29,11 @@ export interface SimplrWebpackOptions {
      * Example: `./dist` + `./fonts` = `./dist/fonts`
      */
     fontsDirectoryOutput?: string;
+    /**
+     * For websites "/" is enough. For electron-renderer "./".
+     *
+     * Default "/"
+     */
+    publicPath?: string;
     target?: SimplrWebpackTarget;
 }
