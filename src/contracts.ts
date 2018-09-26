@@ -26,9 +26,14 @@ export interface SimplrWebpackOptions {
     staticContentDirectoryOutput?: string;
     /**
      * Full path is: {outputDirectory} + {fontsDirectoryOutput}
-     * Example: `./dist` + `./fonts` = `./dist/fonts`
+     * Example: `./dist` + `./assets/fonts` = `./dist/assets/fonts`
      */
     fontsDirectoryOutput?: string;
+    /**
+     * Full path is: {outputDirectory} + {imagesDirectoryOutput}
+     * Example: `./dist` + `./assets/images` = `./dist/assets/images`
+     */
+    imagesDirectoryOutput?: string;
     /**
      * For websites "/" is enough. For electron-renderer "./".
      *

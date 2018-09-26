@@ -21,7 +21,8 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         outputDirectory: opts.outputDirectory || "./wwwroot",
         staticContentDirectory: opts.staticContentDirectory || "./src/static",
         staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
-        fontsDirectoryOutput: opts.fontsDirectoryOutput || "./fonts",
+        fontsDirectoryOutput: opts.fontsDirectoryOutput || "./assets/fonts",
+        imagesDirectoryOutput: opts.imagesDirectoryOutput || "./assets/images",
         emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
         target: opts.target || "web",
         publicPath: opts.publicPath || "/"
@@ -107,9 +108,19 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                     test: /\.(woff|woff2|eot|ttf|otf)$/,
                     options: {
                         name: `./${options.fontsDirectoryOutput}/[name].[ext]`,
-                        publicPath: opts.publicPath
+                        publicPath: opts.publicPath,
+                        limit: 10000
                     },
-                    loader: "file-loader"
+                    loader: "url-loader"
+                },
+                {
+                    test: /\.(png|jpg|gif|svg)$/,
+                    options: {
+                        name: `./${options.imagesDirectoryOutput}/[name].[ext]`,
+                        publicPath: opts.publicPath,
+                        limit: 10000
+                    },
+                    loader: "url-loader"
                 }
             ]
         },
