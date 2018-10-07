@@ -12,21 +12,39 @@ import * as CopyWebpackPlugin from "copy-webpack-plugin";
 import { SimplrWebpackOptions } from "./contracts";
 import { Helpers } from "./helpers";
 
-export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration {
-    const options: Required<SimplrWebpackOptions> = {
-        ...opts,
-        htmlOptions: opts.htmlOptions || ({} as Options),
-        devServerPort: opts.devServerPort || 3000,
-        entryFile: opts.entryFile || "./src/index.ts",
-        outputDirectory: opts.outputDirectory || "./wwwroot",
-        staticContentDirectory: opts.staticContentDirectory || "./src/static",
-        staticContentDirectoryOutput: opts.staticContentDirectoryOutput || "./static",
-        fontsDirectoryOutput: opts.fontsDirectoryOutput || "./assets/fonts",
-        imagesDirectoryOutput: opts.imagesDirectoryOutput || "./assets/images",
-        emitHtml: opts.emitHtml != null ? opts.emitHtml : true,
-        target: opts.target || "web",
-        publicPath: opts.publicPath || "/"
+export function getDefaultWebOptions(): Partial<SimplrWebpackOptions> {
+    return {
+        htmlOptions: {} as Options,
+        devServerPort: 3000,
+        entryFile: "./src/index.ts",
+        outputDirectory: "./wwwroot",
+        staticContentDirectory: "./src/static",
+        staticContentDirectoryOutput: "./static",
+        fontsDirectoryOutput: "./assets/fonts",
+        imagesDirectoryOutput: "./assets/images",
+        emitHtml: true,
+        target: "web",
+        publicPath: "/"
     };
+}
+
+export function getDefaultNodeOptions(): Partial<SimplrWebpackOptions> {
+    return {
+        devServerPort: 3000,
+        entryFile: "./src/index.ts",
+        outputDirectory: "./dist",
+        target: "node"
+    };
+}
+
+export function generateWebpackConfig(options: SimplrWebpackOptions): Configuration {
+    if (options.entryFile == null) {
+        throw new Error("[Simplr Webpack] Entry file is undefined.");
+    }
+    if (options.outputDirectory == null) {
+        throw new Error("[Simplr Webpack] Output directory is undefined.");
+    }
+
     const fullOutputDirectoryLocation = path.resolve(options.projectDirectory, options.outputDirectory);
     const fullTsconfigLocation = path.resolve(options.projectDirectory, Helpers.TS_CONFIG_NAME);
 
@@ -54,7 +72,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
             filename: "[name].bundle.js",
             chunkFilename: "[name].bundle.js",
             path: fullOutputDirectoryLocation,
-            publicPath: opts.publicPath
+            publicPath: options.publicPath
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json", ".scss", ".css"],
@@ -108,7 +126,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                     test: /\.(woff|woff2|eot|ttf|otf)$/,
                     options: {
                         name: `./${options.fontsDirectoryOutput}/[name].[ext]`,
-                        publicPath: opts.publicPath,
+                        publicPath: options.publicPath,
                         limit: 10000
                     },
                     loader: "url-loader"
@@ -117,7 +135,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                     test: /\.(png|jpg|gif|svg)$/,
                     options: {
                         name: `./${options.imagesDirectoryOutput}/[name].[ext]`,
-                        publicPath: opts.publicPath,
+                        publicPath: options.publicPath,
                         limit: 10000
                     },
                     loader: "url-loader"
@@ -127,7 +145,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         plugins: [
             new CleanWebpackPlugin([fullOutputDirectoryLocation], { root: options.projectDirectory }),
             new WriteFilePlugin(),
-            ...(!opts.emitHtml
+            ...(!options.emitHtml
                 ? []
                 : [
                       new HtmlWebpackPlugin({
@@ -148,12 +166,16 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                 checkSyntacticErrors: true,
                 tslint: true
             }),
-            new CopyWebpackPlugin([
-                {
-                    from: options.staticContentDirectory,
-                    to: options.staticContentDirectoryOutput
-                }
-            ])
+            ...(options.staticContentDirectory != null && options.staticContentDirectoryOutput != null
+                ? [
+                      new CopyWebpackPlugin([
+                          {
+                              from: options.staticContentDirectory,
+                              to: options.staticContentDirectoryOutput
+                          }
+                      ])
+                  ]
+                : [])
         ],
         optimization: {
             splitChunks: {
@@ -163,7 +185,7 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
         // addition - add source-map support
         devtool: "inline-source-map",
         devServer:
-            opts.target === "node"
+            options.target === "node"
                 ? {}
                 : {
                       contentBase: fullOutputDirectoryLocation,
@@ -173,10 +195,10 @@ export function generateWebpackConfig(opts: SimplrWebpackOptions): Configuration
                       port: options.devServerPort,
                       historyApiFallback: true
                   },
-        target: opts.target,
+        target: options.target,
         mode: "development",
         node:
-            opts.target === "node"
+            options.target === "node"
                 ? {}
                 : {
                       fs: "empty",

@@ -1,6 +1,6 @@
 {
     "name": "@simplrjs/webpack",
-    "version": "0.1.0-alpha.13",
+    "version": "0.1.0-alpha.14",
     "description": "Tailored webpack for SPA.",
     "publishConfig": {
         "access": "public"

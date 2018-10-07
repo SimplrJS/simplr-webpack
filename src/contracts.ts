@@ -16,8 +16,8 @@ export interface SimplrWebpackOptions {
     emitHtml?: boolean;
     htmlOptions?: Options;
     projectDirectory: string;
-    entryFile?: string;
-    outputDirectory?: string;
+    entryFile: string;
+    outputDirectory: string;
     staticContentDirectory?: string;
     /**
      * Full path is: {outputDirectory} + {staticContentDirectoryOutput}
