@@ -1,0 +1,11 @@
+fork-ts-checker-webpack-plugin
+tsconfig-paths-webpack-plugin/lib
+fs-extra
+babel-core
+babel-loader
+babel-plugin-syntax-dynamic-import
+
+tslint
+tslint-language-service
+typescript
+simplr-tslint

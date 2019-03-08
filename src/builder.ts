@@ -1,13 +1,13 @@
 import { Configuration } from "webpack";
 
 export type UpdateHandler = (webpack: Configuration) => Configuration;
-export type Plugin<TConfig = any> = (config: TConfig | undefined) => UpdateHandler;
+export type Plugin<TConfig = any> = (config: TConfig | undefined, projectDirectory: string) => UpdateHandler;
 
 export class Builder {
-    constructor(private configuration: Configuration = {}) {}
+    constructor(protected readonly projectDirectory: string, private configuration: Configuration = {}) {}
 
     public use<TPlugin extends Plugin>(plugin: TPlugin, config?: Parameters<TPlugin>[0]): this {
-        this.configuration = plugin(config)(this.configuration);
+        this.configuration = plugin(config, this.projectDirectory)(this.configuration);
 
         return this;
     }
@@ -19,6 +19,14 @@ export class Builder {
     }
 
     public toConfig(): Configuration {
+        if (this.configuration.entry == null) {
+            throw new Error("[Simplr Webpack] Entry file is undefined.");
+        }
+
+        if (this.configuration.output == null) {
+            throw new Error("[Simplr Webpack] Output directory is undefined.");
+        }
+
         return this.configuration;
     }
 }
