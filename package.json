@@ -1,15 +1,13 @@
 {
     "name": "@simplrjs/webpack",
-    "version": "0.1.0-alpha.14",
-    "description": "Tailored webpack for SPA.",
+    "version": "1.0.0-beta",
+    "description": "~~~~",
     "publishConfig": {
         "access": "public"
     },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "pretest": "tsc -p . --noEmit",
-        "test": "tslint --project . --config ./tslint.json && echo Successfully passed tslint test.",
         "build": "tsc -p .",
         "watch": "tsc -p . -w"
     },
@@ -26,51 +24,19 @@
     "homepage": "https://github.com/SimplrJS/simplr-webpack#readme",
     "files": [
         "dist",
-        "types.d.ts",
-        "**/*.md",
-        "!/examples",
-        "assets"
+        "**/*.md"
     ],
     "devDependencies": {
-        "tslint": "^5.10.0",
+        "simplr-tslint": "^1.0.0-alpha.14",
+        "tslint": "^5.12.1",
         "tslint-language-service": "^0.9.9",
-        "typescript": "^3.1.1",
-        "simplr-tslint": "^1.0.0-alpha.14"
-    },
-    "peerDependencies": {
-        "webpack": "^4.12.0",
-        "webpack-dev-server": "^3.1.4",
-        "tslint": "^5.10.0",
-        "typescript": "^3.1.1"
+        "typescript": "^3.3.3333"
     },
     "dependencies": {
-        "@types/clean-webpack-plugin": "^0.1.2",
-        "@types/copy-webpack-plugin": "^4.4.1",
-        "@types/fs-extra": "^5.0.4",
-        "@types/html-webpack-plugin": "^2.30.3",
-        "@types/html-webpack-template": "^6.0.3",
-        "@types/node": "^10.3.3",
-        "@types/webpack": "^4.4.0",
-        "autoprefixer": "^8.6.5",
-        "babel-core": "^6.26.3",
-        "babel-loader": "^7.1.4",
-        "babel-plugin-syntax-dynamic-import": "^6.18.0",
-        "clean-webpack-plugin": "^0.1.19",
-        "copy-webpack-plugin": "^4.5.1",
-        "css-loader": "^1.0.0",
-        "file-loader": "^2.0.0",
-        "fork-ts-checker-webpack-plugin": "^0.4.2",
-        "fs-extra": "^6.0.1",
-        "html-webpack-plugin": "^3.2.0",
-        "html-webpack-template": "^6.2.0",
-        "node-sass": "^4.9.2",
-        "postcss-loader": "^2.1.5",
-        "sass-loader": "^7.0.3",
-        "style-loader": "^0.21.0",
-        "ts-loader": "^4.4.1",
-        "tsconfig-paths-webpack-plugin": "^3.2.0",
-        "url-loader": "^1.1.1",
-        "worker-loader": "^2.0.0",
-        "write-file-webpack-plugin": "^4.3.2"
+        "@types/node": "^11.10.5",
+        "@types/webpack": "^4.4.25",
+        "@types/webpack-dev-server": "^3.1.4",
+        "webpack": "^4.29.6",
+        "webpack-dev-server": "^3.2.1"
     }
 }
