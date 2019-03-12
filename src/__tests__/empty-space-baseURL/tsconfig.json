@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "baseUrl": " ",
+        "module": "commonjs",
+        "target": "es5",
+        "removeComments": false,
+        "outDir": "dist",
+        "rootDir": "src",
+        "noUnusedLocals": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "declaration": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmitHelpers": true,
+        "importHelpers": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "types": ["node", "jest"],
+        "typeRoots": ["./node_modules/@types"],
+        "plugins": [
+            {
+                "name": "tslint-language-service",
+                "alwaysShowRuleFailuresAsWarnings": true,
+                "ignoreDefinitionFiles": true
+            }
+        ]
+    },
+    "exclude": ["node_modules","dist"]
+}

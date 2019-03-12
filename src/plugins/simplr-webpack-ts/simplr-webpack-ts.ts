@@ -1,6 +1,7 @@
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin/lib";
-import path from "path";
+import { loadTsconfig, Tsconfig } from "tsconfig-paths/lib/tsconfig-loader";
+import * as path from "path";
 import * as fs from "fs-extra";
 import { Plugin } from "../../builder";
 
@@ -35,6 +36,8 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
         console.error(`Failed while initiating "${TSLINT_CONFIG_NAME}".`, error);
     }
 
+    const tsConfig: Tsconfig | undefined = loadTsconfig(fullTsconfigLocation);
+
     return webpack => {
         if (webpack.plugins == null) {
             webpack.plugins = [];
@@ -61,11 +64,18 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
             webpack.resolve.plugins = [];
         }
 
-        webpack.resolve.plugins.push(
-            new TsconfigPathsPlugin({
-                configFile: fullTsconfigLocation
-            })
-        );
+        if (
+            tsConfig != null &&
+            tsConfig.compilerOptions != null &&
+            tsConfig.compilerOptions.baseUrl != null &&
+            tsConfig.compilerOptions.baseUrl.trim().length !== 0
+        ) {
+            webpack.resolve.plugins.push(
+                new TsconfigPathsPlugin({
+                    configFile: fullTsconfigLocation
+                })
+            );
+        }
 
         if (webpack.resolve.extensions == null) {
             webpack.resolve.extensions = [];
