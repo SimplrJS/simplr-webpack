@@ -4,15 +4,20 @@ import { Builder } from "../builder";
 import * as path from "path";
 import * as fs from "fs-extra";
 import { TypeScriptPlugin } from "../plugins/simplr-webpack-ts/simplr-webpack-ts";
+import { StylesPlugin } from "../plugins/simplr-webpack-styles/simplr-webpack-styles";
 
-const SAMPLE_CONFIGURATION: Configuration = {
-    entry: "./src/index.ts",
-    mode: "development",
-    output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "index.js"
-    }
-};
+let SAMPLE_CONFIGURATION: Configuration = {};
+
+beforeEach(() => {
+    SAMPLE_CONFIGURATION = {
+        entry: "./src/index.ts",
+        mode: "development",
+        output: {
+            path: path.resolve(TEST_PROJECT_LOCATION, "dist"),
+            filename: "index.js"
+        }
+    };
+});
 
 const TEST_PROJECT_LOCATION: string = path.resolve(__dirname, "../../");
 
@@ -59,7 +64,7 @@ it("No configuration output given", () => {
     expect(() => configuration.toConfig()).toThrowError("[Simplr Webpack] Output directory is undefined.");
 });
 
-it("Adding plugin to configuration", () => {
+it("Adding typescript plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION).use(TypeScriptPlugin).toConfig();
     expect(configuration).toMatchSnapshot();
 });
@@ -69,6 +74,7 @@ it("baseURL exists at tsconfig", () => {
     const configuration = new Builder(projectLocation, SAMPLE_CONFIGURATION).use(TypeScriptPlugin).toConfig();
     expect(configuration).toMatchSnapshot();
 });
+
 it("tsconfig with single space baseUrl", () => {
     const configuration = new Builder(path.resolve(__dirname, "./empty-space-baseURL"), SAMPLE_CONFIGURATION)
         .use(TypeScriptPlugin)
@@ -80,5 +86,24 @@ it("tsconfig and tslint do not exist", () => {
     const projectLocation = path.resolve(__dirname, "./tsconfig-tslint-not-exist");
     fs.emptyDir(projectLocation);
     const configuration = new Builder(projectLocation, SAMPLE_CONFIGURATION).use(TypeScriptPlugin).toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("Adding styles plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION).use(StylesPlugin).toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("PostCss config do not exist", () => {
+    const projectLocation = path.resolve(__dirname, "./postcss-config-not-exist");
+    fs.emptyDir(projectLocation);
+    const configuration = new Builder(projectLocation, SAMPLE_CONFIGURATION).use(StylesPlugin).toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+it("Adding more than one plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(StylesPlugin)
+        .use(TypeScriptPlugin)
+        .toConfig();
     expect(configuration).toMatchSnapshot();
 });
