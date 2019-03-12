@@ -17,6 +17,7 @@ const DEFAULT_TS_CONFIG_LOCATION: string = path.resolve(__dirname, TS_CONFIG_NAM
 const TSLINT_CONFIG_NAME: string = "tslint.json";
 const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, TSLINT_CONFIG_NAME);
 
+// TODO: Add more options.
 interface TypeScriptPluginOptions {
     skipLibCheck: boolean;
 }
@@ -56,6 +57,29 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
             };
         }
 
+        webpack.module.rules.push({
+            test: /\.tsx?$/,
+            use: [
+                {
+                    loader: "babel-loader",
+                    options: {
+                        babelrc: true,
+                        plugins: ["syntax-dynamic-import"]
+                    }
+                },
+                {
+                    loader: "ts-loader",
+                    options: {
+                        // disable type checker - we will use it in fork plugin
+                        // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack
+                        happyPackMode: true,
+                        transpileOnly: true
+                    }
+                }
+            ],
+            exclude: /node_modules/
+        });
+
         if (webpack.resolve == null) {
             webpack.resolve = {};
         }
@@ -88,29 +112,6 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
         if (webpack.resolve.extensions.indexOf(TSX_EXTENSION) === -1) {
             webpack.resolve.extensions.push(TSX_EXTENSION);
         }
-
-        webpack.module.rules.push({
-            test: /\.tsx?$/,
-            use: [
-                {
-                    loader: "babel-loader",
-                    options: {
-                        babelrc: true,
-                        plugins: ["syntax-dynamic-import"]
-                    }
-                },
-                {
-                    loader: "ts-loader",
-                    options: {
-                        // disable type checker - we will use it in fork plugin
-                        // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack
-                        happyPackMode: true,
-                        transpileOnly: true
-                    }
-                }
-            ],
-            exclude: /node_modules/
-        });
 
         return webpack;
     };
