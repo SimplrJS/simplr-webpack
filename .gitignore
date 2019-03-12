@@ -266,3 +266,7 @@ dist
 
 coverage
 .rpt2_cache
+
+coverage
+junit.xml
+__snapshots__
