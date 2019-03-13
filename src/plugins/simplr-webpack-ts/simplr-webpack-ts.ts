@@ -8,6 +8,8 @@ import { Plugin } from "../../builder";
 // Extensions.
 const TS_EXTENSION: string = ".ts";
 const TSX_EXTENSION: string = ".tsx";
+const JS_EXTENSION: string = ".js";
+const JSX_EXTENSION: string = ".jsx";
 
 // Tsconfig.
 const TS_CONFIG_NAME: string = "tsconfig.json";
@@ -109,8 +111,21 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
             webpack.resolve.extensions.push(TS_EXTENSION);
         }
 
-        if (webpack.resolve.extensions.indexOf(TSX_EXTENSION) === -1) {
-            webpack.resolve.extensions.push(TSX_EXTENSION);
+        if (tsConfig != null && tsConfig.compilerOptions != null) {
+            // Hack to get other compiler options properties.
+            const tsConfigCompilerOptions = tsConfig.compilerOptions as any;
+            if (tsConfigCompilerOptions.jsx != null) {
+                if (webpack.resolve.extensions.indexOf(TSX_EXTENSION) === -1) {
+                    webpack.resolve.extensions.push(TSX_EXTENSION);
+                }
+                if (webpack.resolve.extensions.indexOf(JSX_EXTENSION) === -1) {
+                    webpack.resolve.extensions.push(JSX_EXTENSION);
+                }
+            }
+        }
+
+        if (webpack.resolve.extensions.indexOf(JS_EXTENSION) === -1) {
+            webpack.resolve.extensions.push(JS_EXTENSION);
         }
 
         return webpack;

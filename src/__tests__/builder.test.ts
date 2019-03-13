@@ -5,8 +5,11 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import { TypeScriptPlugin } from "../plugins/simplr-webpack-ts/simplr-webpack-ts";
 import { StylesPlugin } from "../plugins/simplr-webpack-styles/simplr-webpack-styles";
+import { ImagesPlugin } from "../plugins/simplr-webpack-images/simplr-webpack-images";
+import { CleanPlugin } from "../plugins/simplr-wepack-clean/simplr-wepack-clean";
 
 let SAMPLE_CONFIGURATION: Configuration = {};
+const TEST_PROJECT_LOCATION: string = path.resolve(__dirname, "../../");
 
 beforeEach(() => {
     SAMPLE_CONFIGURATION = {
@@ -19,7 +22,6 @@ beforeEach(() => {
     };
 });
 
-const TEST_PROJECT_LOCATION: string = path.resolve(__dirname, "../../");
 
 it("Simple configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION).toConfig();
@@ -81,6 +83,12 @@ it("tsconfig with single space baseUrl", () => {
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
+it("tsconfig jsx property exist", () => {
+    const configuration = new Builder(path.resolve(__dirname, "./tsconfig-jsx-exist"), SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
 
 it("tsconfig and tslint do not exist", () => {
     const projectLocation = path.resolve(__dirname, "./tsconfig-tslint-not-exist");
@@ -104,6 +112,23 @@ it("Adding more than one plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
         .use(StylesPlugin)
         .use(TypeScriptPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+it("Adding image plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+it("Adding clean plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
