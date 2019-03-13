@@ -1,4 +1,5 @@
 import { Configuration } from "webpack";
+import "webpack-dev-server";
 
 export type UpdateHandler = (webpack: Configuration) => Configuration;
 export type Plugin<TConfig = any> = (config: TConfig | undefined, projectDirectory: string) => UpdateHandler;
@@ -25,6 +26,14 @@ export class Builder {
 
         if (this.configuration.output == null) {
             throw new Error("[Simplr Webpack] Output directory is undefined.");
+        }
+
+        if (this.configuration.target !== "node" && this.configuration.node == null) {
+            this.configuration.node = {
+                fs: "empty",
+                net: "empty",
+                tls: "empty"
+            };
         }
 
         return this.configuration;

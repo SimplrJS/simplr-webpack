@@ -1,12 +1,18 @@
 jest.mock("fork-ts-checker-webpack-plugin");
 import { Configuration } from "webpack";
-import { Builder } from "../builder";
 import * as path from "path";
 import * as fs from "fs-extra";
+// Config builder
+import { Builder } from "../builder";
+// Plugins
 import { TypeScriptPlugin } from "../plugins/simplr-webpack-ts/simplr-webpack-ts";
 import { StylesPlugin } from "../plugins/simplr-webpack-styles/simplr-webpack-styles";
 import { ImagesPlugin } from "../plugins/simplr-webpack-images/simplr-webpack-images";
 import { CleanPlugin } from "../plugins/simplr-wepack-clean/simplr-wepack-clean";
+import { HtmlPlugin } from "../plugins/simplr-html-plugin/simplr-html-plugin";
+import { WriteFilePlugin } from "../plugins/simplr-webpack-write-file/simplr-webpack-write-files";
+import { CopyPlugin } from "../plugins/simplr-copy-plugin/simplr-copy-plugin";
+import { WebDevPlugin } from "../plugins/simplr-web-dev/simplr-web-dev";
 
 let SAMPLE_CONFIGURATION: Configuration = {};
 const TEST_PROJECT_LOCATION: string = path.resolve(__dirname, "../../");
@@ -21,7 +27,6 @@ beforeEach(() => {
         }
     };
 });
-
 
 it("Simple configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION).toConfig();
@@ -108,6 +113,7 @@ it("PostCss config do not exist", () => {
     const configuration = new Builder(projectLocation, SAMPLE_CONFIGURATION).use(StylesPlugin).toConfig();
     expect(configuration).toMatchSnapshot();
 });
+
 it("Adding more than one plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
         .use(StylesPlugin)
@@ -115,6 +121,7 @@ it("Adding more than one plugin to configuration", () => {
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
+
 it("Adding image plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
         .use(TypeScriptPlugin)
@@ -123,12 +130,63 @@ it("Adding image plugin to configuration", () => {
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
+
 it("Adding clean plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
         .use(TypeScriptPlugin)
         .use(StylesPlugin)
         .use(ImagesPlugin)
         .use(CleanPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("Adding html plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(HtmlPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("Adding write file plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(WriteFilePlugin)
+        .use(HtmlPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("Adding copy plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(WriteFilePlugin)
+        .use(HtmlPlugin)
+        .use(CopyPlugin)
+        .toConfig();
+    expect(configuration).toMatchSnapshot();
+});
+
+it("Adding web dev plugin to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(WriteFilePlugin)
+        .use(HtmlPlugin)
+        .use(CopyPlugin)
+        .use(WebDevPlugin)
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });

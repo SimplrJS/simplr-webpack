@@ -1,0 +1,4 @@
+html-webpack-plugin
+@types/html-webpack-plugin
+html-webpack-template
+@types/html-webpack-template

@@ -1,0 +1,2 @@
+copy-webpack-plugin
+@types/copy-webpack-plugin
