@@ -1,9 +1,11 @@
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin/lib";
+import { Options as TsconfigPathsPluginOptions } from "tsconfig-paths-webpack-plugin/lib/options";
 import { loadTsconfig, Tsconfig } from "tsconfig-paths/lib/tsconfig-loader";
 import * as path from "path";
 import * as fs from "fs-extra";
 import { Plugin } from "../../builder";
+import { ForkTsCheckerWebpackPluginOptions } from "./simplr-webpack-ts-options";
 
 // Extensions.
 const TS_EXTENSION: string = ".ts";
@@ -12,20 +14,22 @@ const JS_EXTENSION: string = ".js";
 const JSX_EXTENSION: string = ".jsx";
 
 // Tsconfig.
-const TS_CONFIG_NAME: string = "tsconfig.json";
+export const TS_CONFIG_NAME: string = "tsconfig.json";
 const DEFAULT_TS_CONFIG_LOCATION: string = path.resolve(__dirname, TS_CONFIG_NAME);
 
 // TsLint.
-const TSLINT_CONFIG_NAME: string = "tslint.json";
+export const TSLINT_CONFIG_NAME: string = "tslint.json";
 const DEFAULT_TSLINT_CONFIG_LOCATION: string = path.resolve(__dirname, TSLINT_CONFIG_NAME);
 
 // TODO: Add more options.
 interface TypeScriptPluginOptions {
-    skipLibCheck: boolean;
+    forkTsCheckerOptions?: Partial<ForkTsCheckerWebpackPluginOptions>;
+    tsconfigPathsPluginOptions?: Partial<TsconfigPathsPluginOptions>;
 }
 
 export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projectDirectory) => {
     const fullTsconfigLocation = path.resolve(projectDirectory, TS_CONFIG_NAME);
+    let baseURLExist: boolean = false;
 
     try {
         checkTsConfig(projectDirectory);
@@ -46,10 +50,16 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
             webpack.plugins = [];
         }
 
+        let forkTsConfig: Partial<ForkTsCheckerWebpackPluginOptions> = {};
+        if (config != null && config.forkTsCheckerOptions != null) {
+            forkTsConfig = config.forkTsCheckerOptions;
+        }
+
         webpack.plugins.push(
             new ForkTsCheckerWebpackPlugin({
                 checkSyntacticErrors: true,
-                tslint: true
+                tslint: true,
+                ...forkTsConfig
             })
         );
 
@@ -96,11 +106,23 @@ export const TypeScriptPlugin: Plugin<TypeScriptPluginOptions> = (config, projec
             tsConfig.compilerOptions.baseUrl != null &&
             tsConfig.compilerOptions.baseUrl.trim().length !== 0
         ) {
-            webpack.resolve.plugins.push(
-                new TsconfigPathsPlugin({
-                    configFile: fullTsconfigLocation
-                })
-            );
+            let configToSpread = {};
+            if (config != null && config.tsconfigPathsPluginOptions != null) {
+                configToSpread = config.tsconfigPathsPluginOptions;
+            }
+
+            const defaultOptions: Partial<TsconfigPathsPluginOptions> = {
+                configFile: fullTsconfigLocation,
+                ...configToSpread
+            };
+
+            webpack.resolve.plugins.push(new TsconfigPathsPlugin(defaultOptions));
+
+            baseURLExist = true;
+        }
+
+        if (!baseURLExist && config != null && config.tsconfigPathsPluginOptions != null) {
+            throw new Error(`Cannot add tsconfigPathsPluginOptions because baseUrl do not exist at ${TS_CONFIG_NAME}`);
         }
 
         if (webpack.resolve.extensions == null) {
