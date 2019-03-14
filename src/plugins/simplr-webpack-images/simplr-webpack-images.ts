@@ -5,18 +5,27 @@ import { Plugin } from "../../builder";
 const IMAGES_OUTPUT_LOCATION: string = "assets/images";
 const PUBLIC_PATH: string = "/";
 
-export const ImagesPlugin: Plugin = (config, projectDirectory) => webpack => {
+interface ImagesPluginOptions {
+    imagesOutputLocation?: string;
+    publicPath?: string;
+}
+
+export const ImagesPlugin: Plugin<ImagesPluginOptions> = (config, projectDirectory) => webpack => {
     if (webpack.module == null) {
         webpack.module = {
             rules: []
         };
     }
 
+    const imagesOutputLocation: string =
+        config != null && config.imagesOutputLocation != null ? config.imagesOutputLocation : IMAGES_OUTPUT_LOCATION;
+    const publicPath: string = config != null && config.publicPath != null ? config.publicPath : PUBLIC_PATH;
+
     webpack.module.rules.push({
         test: /\.(png|jpg|gif|svg)$/,
         options: {
-            name: `./${IMAGES_OUTPUT_LOCATION}/[name].[ext]`,
-            publicPath: PUBLIC_PATH,
+            name: `./${imagesOutputLocation}/[name].[ext]`,
+            publicPath: publicPath,
             limit: 10000
         },
         loader: "url-loader"
