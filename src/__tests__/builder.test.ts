@@ -11,7 +11,6 @@ import { ImagesPlugin } from "../plugins/simplr-webpack-images/simplr-webpack-im
 import { CleanPlugin } from "../plugins/simplr-wepack-clean/simplr-wepack-clean";
 import { HtmlPlugin } from "../plugins/simplr-html-plugin/simplr-html-plugin";
 import { WriteFilePlugin } from "../plugins/simplr-webpack-write-file/simplr-webpack-write-files";
-import { CopyPlugin } from "../plugins/simplr-copy-plugin/simplr-copy-plugin";
 import { WebDevPlugin } from "../plugins/simplr-web-dev/simplr-web-dev";
 
 let SAMPLE_CONFIGURATION: Configuration = {};
@@ -205,6 +204,22 @@ it("Adding html plugin to configuration", () => {
     expect(configuration).toMatchSnapshot();
 });
 
+it("Adding html plugin with options to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(HtmlPlugin, {
+            options: {
+                chunks: "all"
+            }
+        })
+        .toConfig();
+
+    expect(configuration).toMatchSnapshot();
+});
+
 it("Adding write file plugin to configuration", () => {
     const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
         .use(TypeScriptPlugin)
@@ -225,7 +240,6 @@ it("Adding copy plugin to configuration", () => {
         .use(CleanPlugin)
         .use(WriteFilePlugin)
         .use(HtmlPlugin)
-        .use(CopyPlugin)
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
@@ -238,7 +252,6 @@ it("Adding web dev plugin to configuration", () => {
         .use(CleanPlugin)
         .use(WriteFilePlugin)
         .use(HtmlPlugin)
-        .use(CopyPlugin)
         .use(WebDevPlugin)
         .toConfig();
     expect(configuration).toMatchSnapshot();
