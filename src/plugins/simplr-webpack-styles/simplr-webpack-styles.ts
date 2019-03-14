@@ -10,15 +10,17 @@ const SCSS_EXTENSION: string = ".scss";
 const POSTCSS_CONFIG_NAME: string = "postcss.config.js";
 const DEFAULT_POSTCSS_CONFIG_LOCATION: string = path.resolve(__dirname, POSTCSS_CONFIG_NAME);
 
-// TODO: Add to default options.
 // Fonts location.
 const FONTS_OUTPUT_LOCATION: string = "./assets/fonts";
-
-// TODO: Add to default options.
 // Public path
 const PUBLIC_PATH: string = "./";
 
-export const StylesPlugin: Plugin = (config, projectDirectory) => {
+interface StylesPluginOptions {
+    fontsOutputLocation?: string;
+    fontsPublicPath?: string;
+}
+
+export const StylesPlugin: Plugin<StylesPluginOptions> = (config, projectDirectory) => {
     try {
         checkPostCssConfig(projectDirectory);
     } catch (error) {
@@ -31,6 +33,11 @@ export const StylesPlugin: Plugin = (config, projectDirectory) => {
                 rules: []
             };
         }
+
+        const fontsOutputLocation: string =
+            config != null && config.fontsOutputLocation != null ? config.fontsOutputLocation : FONTS_OUTPUT_LOCATION;
+
+        const fontsPublicPath: string = config != null && config.fontsPublicPath != null ? config.fontsPublicPath : PUBLIC_PATH;
 
         webpack.module.rules.push(
             {
@@ -53,8 +60,8 @@ export const StylesPlugin: Plugin = (config, projectDirectory) => {
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
                 options: {
-                    name: `./${FONTS_OUTPUT_LOCATION}/[name].[ext]`,
-                    publicPath: PUBLIC_PATH,
+                    name: `${fontsOutputLocation}/[name].[ext]`,
+                    publicPath: fontsPublicPath,
                     limit: 10000
                 },
                 loader: "url-loader"

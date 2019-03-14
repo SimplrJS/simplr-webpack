@@ -2,7 +2,7 @@ import { Plugin } from "../../builder";
 
 // TODO: Add to default options.
 // Fonts location.
-const IMAGES_OUTPUT_LOCATION: string = "assets/images";
+const IMAGES_OUTPUT_LOCATION: string = "./assets/images";
 const PUBLIC_PATH: string = "/";
 
 interface ImagesPluginOptions {
@@ -19,12 +19,13 @@ export const ImagesPlugin: Plugin<ImagesPluginOptions> = (config, projectDirecto
 
     const imagesOutputLocation: string =
         config != null && config.imagesOutputLocation != null ? config.imagesOutputLocation : IMAGES_OUTPUT_LOCATION;
+
     const publicPath: string = config != null && config.publicPath != null ? config.publicPath : PUBLIC_PATH;
 
     webpack.module.rules.push({
         test: /\.(png|jpg|gif|svg)$/,
         options: {
-            name: `./${imagesOutputLocation}/[name].[ext]`,
+            name: `${imagesOutputLocation}/[name].[ext]`,
             publicPath: publicPath,
             limit: 10000
         },
