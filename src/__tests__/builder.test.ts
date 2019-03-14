@@ -256,3 +256,21 @@ it("Adding web dev plugin to configuration", () => {
         .toConfig();
     expect(configuration).toMatchSnapshot();
 });
+
+it("Adding web dev plugin with options to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(TypeScriptPlugin)
+        .use(StylesPlugin)
+        .use(ImagesPlugin)
+        .use(CleanPlugin)
+        .use(WriteFilePlugin)
+        .use(HtmlPlugin)
+        .use(WebDevPlugin, {
+            devServer: {
+                compress: false
+            }
+        })
+        .toConfig();
+
+    expect(configuration).toMatchSnapshot();
+});
