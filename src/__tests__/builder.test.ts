@@ -159,6 +159,14 @@ it("Adding styles plugin to configuration", () => {
     expect(configuration).toMatchSnapshot();
 });
 
+it("Adding styles plugin with options to configuration", () => {
+    const configuration = new Builder(TEST_PROJECT_LOCATION, SAMPLE_CONFIGURATION)
+        .use(StylesPlugin, { fontsPublicPath: "../plugins" })
+        .toConfig();
+
+    expect(configuration).toMatchSnapshot();
+});
+
 it("PostCss config do not exist", () => {
     const projectLocation = path.resolve(__dirname, "./postcss-config-not-exist");
     fs.emptyDir(projectLocation);
